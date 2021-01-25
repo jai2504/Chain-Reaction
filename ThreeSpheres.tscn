@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://SpheresAnimation.gd" type="Script" id=1]
+
+[sub_resource type="SphereMesh" id=1]
+
+[node name="ThreeSpheres" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 0.190549, 0, -0.0607534, 0, 0.2, 0, 0.0607534, 0, 0.190549, 0.0940805, 0, 0.130316 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="MeshInstance2" type="MeshInstance" parent="."]
+transform = Transform( 0.190549, 0, -0.0607534, 0, 0.2, 0, 0.0607534, 0, 0.190549, -0.06108, 0, -0.131846 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="MeshInstance3" type="MeshInstance" parent="."]
+transform = Transform( 0.190549, -0.0151786, -0.0588267, 0, 0.193657, -0.0499679, 0.0607534, 0.0476067, 0.184506, -0.0317159, -0.01935, 0.105254 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="Tween2" type="Tween" parent="."]
+
+[node name="Tween3" type="Tween" parent="."]
+[connection signal="tween_completed" from="Tween" to="." method="_on_Tween_tween_completed"]
