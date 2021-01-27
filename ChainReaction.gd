@@ -11,7 +11,10 @@ var leftb=0
 var rightb=9
 var curr_button=null
 signal splitter_complete
-
+var no_of_players=3
+var colors=[Color(1.0,0,0),Color(0,1.0,0),Color(0,0,1.0)]
+var chance=0
+var current_color=colors[chance]
 class Space:
 	var n=0 
 	var color=-1 # 0 for p1, 1 for p2, 2 for p3
@@ -79,6 +82,11 @@ func _process(delta):
 	pass
 
 func button_pressed(pos):
+	chance+=1
+	if chance%no_of_players==0:
+		chance=0
+	current_color=colors[chance]
+	$ImmediateGeometry.material_override.albedo_color=current_color
 	ball_data[pos.x][pos.y].n+=1
 	explode(pos)
 	print_ball_data()
@@ -174,6 +182,7 @@ func explode(pos):
 			explode(Vector2(pos.x+1,pos.y))
 			explode(Vector2(pos.x,pos.y-1))
 			explode(Vector2(pos.x-1,pos.y))
+		replace_sphere(pos,ball_data[pos.x][pos.y].n)
 		return
 	#Spaces left
 	if ball_data[pos.x][pos.y].n>=4:
@@ -193,28 +202,30 @@ func explode(pos):
 		explode(Vector2(pos.x+1,pos.y))
 		explode(Vector2(pos.x,pos.y-1))
 		explode(Vector2(pos.x-1,pos.y))
-	
-	return	
-	
-	
+	replace_sphere(pos,ball_data[pos.x][pos.y].n)
 	pass
 
 
 func replace_sphere(pos,num):
+	var newspatial=SpatialMaterial.new()
+	newspatial.albedo_color=current_color
 	if num==0:
 		var s=board_spheres[pos.x][pos.y]
 		s.queue_free()
 		s=single_sph.instance()
+		s.material_override=newspatial
 		$Spheres.add_child(s)
 		s.translation=Vector3(pos.y+0.5,0.5,pos.x+0.5)
 		s.hide()
 		board_spheres[pos.x][pos.y]=s
 	elif num==1:
+		
 		if board_spheres[pos.x][pos.y]!=null:
 			board_spheres[pos.x][pos.y].show()
 		else:
 			var s=single_sph.instance()
 			$Spheres.add_child(s)
+			$Spheres.get_child(0).albedo_color=current_color
 			s.translation=Vector3(pos.y+0.5,0.5,pos.x+0.5)
 			board_spheres[pos.x][pos.y]=s
 	elif num==2:
@@ -223,12 +234,14 @@ func replace_sphere(pos,num):
 			s.queue_free()
 			s=two_sph.instance()
 			$Spheres.add_child(s)
+			s.material_override=newspatial
 			s.translation=Vector3(pos.y+0.5,0.5,pos.x+0.5)
 			board_spheres[pos.x][pos.y]=s
 	elif num==3:
 		if board_spheres[pos.x][pos.y]!=null:
 			var s=board_spheres[pos.x][pos.y]
 			s.queue_free()
+			s.get_node('.').set_material_override(newspatial)
 			s=three_sph.instance()
 			$Spheres.add_child(s)
 			s.translation=Vector3(pos.y+0.5,0.5,pos.x+0.5)
